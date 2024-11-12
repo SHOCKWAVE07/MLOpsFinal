@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  ml_app:
+    build: .
+    container_name: ml_app_container
+    environment:
+      - MLFLOW_TRACKING_URI=http://mlflow_server:5000
+    volumes:
+      - ./app:/app  # Mount application code for easy updates
+      - ./mlruns:/mlruns  # Volume for MLflow run artifacts
+    depends_on:
+      - mlflow_server
+
+  mlflow_server:
+    image: mlflow:latest
+    container_name: mlflow_server_container
+    environment:
+      - MLFLOW_BACKEND_STORE_URI=sqlite:///mlflow.db  # Database for tracking metadata
+      - MLFLOW_ARTIFACT_ROOT=/mlruns  # Location for artifacts
+    volumes:
+      - ./mlruns:/mlruns  # Volume for storing artifacts
+      - ./mlflow.db:/mlflow.db  # SQLite database for tracking
+    ports:
+      - "5000:5000"  # Expose MLflow server port
+    command: mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root /mlruns --host 0.0.0.0
