@@ -10,7 +10,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-ENV MLFLOW_TRACKING_URI=http://mlflow_server:5000
 
-
-CMD ["python", "main.py"]
+CMD ["python", "Q4.py"]
